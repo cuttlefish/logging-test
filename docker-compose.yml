@@ -1,0 +1,46 @@
+### None of this is production ready for many reasons
+
+version: '3.1'
+services:
+
+  filebeat:
+    build: ./filebeat
+    environment:
+      API_TOKEN: PvkOTVNoUwndwVDPlndLLUfkwIikDebh
+      LISTENER_NAME: listener.logz.io
+      LISTENER_PORT: 5015
+    volumes:
+      - geoserver_logs:/var/log/geoserver
+    networks:
+      logstash:
+
+# logstash is a steaming pos. It even lies about where it puts its own logs >:|
+  # logstash:
+  #   build: ./logstash
+  #   environment:
+  #     API_TOKEN: PvkOTVNoUwndwVDPlndLLUfkwIikDebh
+  #     LOGZ_LISTENER: listener.logz.io
+  #   volumes:
+  #     - geoserver_logs:/var/log/geoserver
+  #   networks:
+  #     logstash:
+  #   expose:
+  #     - "5050"
+
+  geoserver:
+    # Don't _actually_ use this image
+    image: kartoza/geoserver:latest
+    volumes:
+      - geoserver_logs:/usr/local/tomcat/logs
+    networks:
+      logstash:
+    expose:
+      - "8080"
+    ports:
+      - "8080:8080"
+
+volumes:
+  geoserver_logs:
+
+networks:
+  logstash:

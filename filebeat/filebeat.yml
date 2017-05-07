@@ -1,0 +1,25 @@
+############################# Filebeat #####################################
+filebeat:
+  prospectors:
+    -
+      paths:
+        - /var/log/geoserver/*
+      fields:
+        logzio_codec: plain
+        token: ${API_TOKEN}
+      fields_under_root: true
+      ignore_older: 3h
+      document_type: geoserver
+  registry_file: /var/lib/filebeat/registry
+############################# Output ##########################################
+output:
+  logstash:
+    hosts: ["${LISTENER_NAME}:${LISTENER_PORT}"]
+
+#########  The below configuration is used for Filebeat 1.3 or lower
+    tls:
+      certificate_authorities: ['/etc/pki/tls/certs/COMODORSADomainValidationSecureServerCA.crt']   
+      
+########  The below configuration is used for Filebeat 5.0 or higher      
+    ssl:
+      certificate_authorities: ['/etc/pki/tls/certs/COMODORSADomainValidationSecureServerCA.crt']
